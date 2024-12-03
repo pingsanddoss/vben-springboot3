@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -37,9 +38,9 @@ import java.util.Set;
 @Component
 @Slf4j
 public class ShiroRealm extends AuthorizingRealm {
-	@Lazy
-    @Resource
-    private CommonAPI commonApi;
+//	@Lazy
+//    @Resource
+//    private CommonAPI commonApi;
 
     @Lazy
     @Resource
@@ -73,12 +74,14 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         // 设置用户拥有的角色集合，比如“admin,test”
-        Set<String> roleSet = commonApi.queryUserRolesById(userId);
+        //Set<String> roleSet = commonApi.queryUserRolesById(userId);
+        Set<String> roleSet = new HashSet<>();
         //System.out.println(roleSet.toString());
         info.setRoles(roleSet);
 
         // 设置用户拥有的权限集合，比如“sys:role:add,sys:user:add”
-        Set<String> permissionSet = commonApi.queryUserAuths(userId);
+        //Set<String> permissionSet = commonApi.queryUserAuths(userId);
+        Set<String> permissionSet = new HashSet<>();
         info.addStringPermissions(permissionSet);
         //System.out.println(permissionSet);
         log.info("===============Shiro权限认证成功==============");
@@ -143,41 +146,41 @@ public class ShiroRealm extends AuthorizingRealm {
         }
         //update-begin-author:taoyan date:20210609 for:校验用户的tenant_id和前端传过来的是否一致
         String userTenantIds = loginUser.getRelTenantIds();
-        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL && oConvertUtils.isNotEmpty(userTenantIds)){
-            String contextTenantId = TenantContext.getTenant();
-            log.debug("登录租户：" + contextTenantId);
-            log.debug("用户拥有那些租户：" + userTenantIds);
-             //登录用户无租户，前端header中租户ID值为 0
-            String str ="0";
-            if(oConvertUtils.isNotEmpty(contextTenantId) && !str.equals(contextTenantId)){
-                //update-begin-author:taoyan date:20211227 for: /issues/I4O14W 用户租户信息变更判断漏洞
-                String[] arr = userTenantIds.split(",");
-                if(!oConvertUtils.isIn(contextTenantId, arr)){
-                    boolean isAuthorization = false;
-                    //========================================================================
-                    // 查询用户信息（如果租户不匹配从数据库中重新查询一次用户信息）
-                    String loginUserKey = CacheConstant.SYS_USERS_CACHE + "::" + username;
-                    redisUtil.del(loginUserKey);
-                    LoginUser loginUserFromDb = commonApi.getUserByName(username);
-                    if (oConvertUtils.isNotEmpty(loginUserFromDb.getRelTenantIds())) {
-                        String[] newArray = loginUserFromDb.getRelTenantIds().split(",");
-                        if (oConvertUtils.isIn(contextTenantId, newArray)) { 
-                            isAuthorization = true;
-                        }
-                    }
-                    //========================================================================
-
-                    //*********************************************
-                    if(!isAuthorization){
-                        log.warn("租户异常——当前登录的租户是：" + contextTenantId);
-                        log.warn("租户异常——用户拥有的租户是：" + userTenantIds);
-                        throw new AuthenticationException("登录租户授权变更，请重新登陆!");
-                    }
-                    //*********************************************
-                }
-                //update-end-author:taoyan date:20211227 for: /issues/I4O14W 用户租户信息变更判断漏洞
-            }
-        }
+//        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL && oConvertUtils.isNotEmpty(userTenantIds)){
+//            String contextTenantId = TenantContext.getTenant();
+//            log.debug("登录租户：" + contextTenantId);
+//            log.debug("用户拥有那些租户：" + userTenantIds);
+//             //登录用户无租户，前端header中租户ID值为 0
+//            String str ="0";
+//            if(oConvertUtils.isNotEmpty(contextTenantId) && !str.equals(contextTenantId)){
+//                //update-begin-author:taoyan date:20211227 for: /issues/I4O14W 用户租户信息变更判断漏洞
+//                String[] arr = userTenantIds.split(",");
+//                if(!oConvertUtils.isIn(contextTenantId, arr)){
+//                    boolean isAuthorization = false;
+//                    //========================================================================
+//                    // 查询用户信息（如果租户不匹配从数据库中重新查询一次用户信息）
+//                    String loginUserKey = CacheConstant.SYS_USERS_CACHE + "::" + username;
+//                    redisUtil.del(loginUserKey);
+//                    LoginUser loginUserFromDb = commonApi.getUserByName(username);
+//                    if (oConvertUtils.isNotEmpty(loginUserFromDb.getRelTenantIds())) {
+//                        String[] newArray = loginUserFromDb.getRelTenantIds().split(",");
+//                        if (oConvertUtils.isIn(contextTenantId, newArray)) {
+//                            isAuthorization = true;
+//                        }
+//                    }
+//                    //========================================================================
+//
+//                    //*********************************************
+//                    if(!isAuthorization){
+//                        log.warn("租户异常——当前登录的租户是：" + contextTenantId);
+//                        log.warn("租户异常——用户拥有的租户是：" + userTenantIds);
+//                        throw new AuthenticationException("登录租户授权变更，请重新登陆!");
+//                    }
+//                    //*********************************************
+//                }
+//                //update-end-author:taoyan date:20211227 for: /issues/I4O14W 用户租户信息变更判断漏洞
+//            }
+//        }
         //update-end-author:taoyan date:20210609 for:校验用户的tenant_id和前端传过来的是否一致
         return loginUser;
     }

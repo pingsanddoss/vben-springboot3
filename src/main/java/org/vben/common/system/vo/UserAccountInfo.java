@@ -3,7 +3,7 @@ package org.vben.common.system.vo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.jeecg.common.desensitization.annotation.SensitiveField;
+
 
 /**
  * <p>
@@ -41,7 +41,7 @@ public class UserAccountInfo {
     /**
      * 头像
      */
-    @SensitiveField
+
     private String avatar;
 
     /**
@@ -52,6 +52,6 @@ public class UserAccountInfo {
     /**
      * 电话
      */
-    @SensitiveField
+
     private String phone;
 }

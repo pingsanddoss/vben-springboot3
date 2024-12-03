@@ -1,6 +1,6 @@
 package org.vben.common.system.vo;
 
-import org.jeecg.common.util.DateUtils;
+import org.vben.common.util.DateUtils;
 
 import java.util.List;
 

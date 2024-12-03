@@ -40,13 +40,12 @@ public class SysUser implements Serializable {
     /**
      * 登录账号
      */
-    @Excel(name = "登录账号", width = 15)
+
     private String username;
 
     /**
      * 真实姓名
      */
-    @Excel(name = "真实姓名", width = 15)
     private String realname;
 
     /**
@@ -64,7 +63,6 @@ public class SysUser implements Serializable {
     /**
      * 头像
      */
-    @Excel(name = "头像", width = 15,type = 2)
     private String avatar;
 
     /**
@@ -78,20 +76,17 @@ public class SysUser implements Serializable {
     /**
      * 性别（1：男 2：女）
      */
-    @Excel(name = "性别", width = 15,dicCode="sex")
-    @Dict(dicCode = "sex")
+
     private Integer sex;
 
     /**
      * 电子邮件
      */
-    @Excel(name = "电子邮件", width = 15)
     private String email;
 
     /**
      * 电话
      */
-    @Excel(name = "电话", width = 15)
     private String phone;
 
     /**
@@ -109,35 +104,30 @@ public class SysUser implements Serializable {
     /**
      * 状态(1：正常  2：冻结 ）
      */
-    @Excel(name = "状态", width = 15,dicCode="user_status")
-    @Dict(dicCode = "user_status")
+
     private Integer status;
 
     /**
      * 删除状态（0，正常，1已删除）
      */
-    @Excel(name = "删除状态", width = 15,dicCode="del_flag")
-    @TableLogic
+
     private Integer delFlag;
 
     /**
      * 工号，唯一键
      */
-    @Excel(name = "工号", width = 15)
+
     private String workNo;
 
     /**
      * 职务，关联职务表
      */
-    @Excel(name = "职务", width = 15)
-    @Dict(dictTable ="sys_position",dicText = "name",dicCode = "id")
-    @TableField(exist = false)
     private String post;
 
     /**
      * 座机号
      */
-    @Excel(name = "座机号", width = 15)
+
     private String telephone;
 
     /**
@@ -167,20 +157,19 @@ public class SysUser implements Serializable {
     /**
      * 身份（0 普通成员 1 上级）
      */
-    @Excel(name="（1普通成员 2上级）",width = 15)
+
     private Integer userIdentity;
 
     /**
      * 负责部门
      */
-    @Excel(name="负责部门",width = 15,dictTable ="sys_depart",dicText = "depart_name",dicCode = "id")
-    @Dict(dictTable ="sys_depart",dicText = "depart_name",dicCode = "id")
+
     private String departIds;
 
     /**
      * 多租户ids临时用，不持久化数据库(数据库字段不存在)
      */
-    @TableField(exist = false)
+
     private String relTenantIds;
 
     /**设备id uniapp推送用*/
@@ -189,13 +178,13 @@ public class SysUser implements Serializable {
     /**
      * 登录首页地址
      */
-    @TableField(exist = false)
+
     private String homePath;
 
     /**
      * 职位名称
      */
-    @TableField(exist = false)
+
     private String postText;
 
     /**
@@ -206,7 +195,7 @@ public class SysUser implements Serializable {
     /**
      * 是否已经绑定第三方
      */
-    @TableField(exist = false)
+
     private boolean izBindThird;
 
     /**
