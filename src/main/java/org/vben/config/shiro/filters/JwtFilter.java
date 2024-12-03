@@ -1,22 +1,22 @@
 package org.vben.config.shiro.filters;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.jeecg.common.config.TenantContext;
-import org.jeecg.common.constant.CommonConstant;
-import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.config.shiro.JwtToken;
-import org.jeecg.config.shiro.ignore.InMemoryIgnoreAuth;
+import org.vben.common.constant.CommonConstant;
+import org.vben.common.system.util.JwtUtil;
+import org.vben.common.util.oConvertUtils;
+import org.vben.config.shiro.JwtToken;
+import org.vben.config.shiro.ignore.InMemoryIgnoreAuth;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * @Description: 鉴权登录拦截器
@@ -107,8 +107,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             return false;
         }
         //update-begin-author:taoyan date:20200708 for:多租户用到
-        String tenantId = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
-        TenantContext.setTenant(tenantId);
+       // String tenantId = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
+        //TenantContext.setTenant(tenantId);
         //update-end-author:taoyan date:20200708 for:多租户用到
 
         return super.preHandle(request, response);
@@ -125,6 +125,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     public void afterCompletion(ServletRequest request, ServletResponse response, Exception exception) throws Exception {
         //log.info("------清空线程中多租户的ID={}------",TenantContext.getTenant());
-        TenantContext.clear();
+       // TenantContext.clear();
     }
 }
