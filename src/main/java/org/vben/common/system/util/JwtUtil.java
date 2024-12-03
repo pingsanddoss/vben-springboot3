@@ -10,14 +10,15 @@ import com.google.common.base.Joiner;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.jeecg.common.api.vo.Result;
+import org.vben.common.api.vo.Result;
 import org.vben.common.constant.CommonConstant;
 import org.vben.common.constant.DataBaseConstant;
 import org.vben.common.constant.SymbolConstant;
 import org.vben.common.constant.TenantConstant;
-import org.jeecg.common.exception.JeecgBootException;
+
 import org.vben.common.system.vo.LoginUser;
 import org.vben.common.system.vo.SysUserCacheInfo;
 import org.vben.common.util.DateUtils;
@@ -121,11 +122,11 @@ public class JwtUtil {
 	 * @return
 	 * @throws JeecgBootException
 	 */
-	public static String getUserNameByToken(HttpServletRequest request) throws JeecgBootException {
+	public static String getUserNameByToken(HttpServletRequest request){
 		String accessToken = request.getHeader("X-Access-Token");
 		String username = getUsername(accessToken);
 		if (oConvertUtils.isEmpty(username)) {
-			throw new JeecgBootException("未获取到用户");
+			//throw new JeecgBootException("未获取到用户");
 		}
 		return username;
 	}

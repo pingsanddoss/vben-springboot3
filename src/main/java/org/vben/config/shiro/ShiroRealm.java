@@ -11,9 +11,8 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.jeecg.common.api.CommonAPI;
-import org.jeecg.common.config.TenantContext;
-import org.jeecg.common.constant.CacheConstant;
+import org.vben.common.api.CommonAPI;
+
 import org.vben.common.constant.CommonConstant;
 import org.vben.common.system.util.JwtUtil;
 import org.vben.common.system.vo.LoginUser;
@@ -21,7 +20,7 @@ import org.vben.common.util.RedisUtil;
 import org.vben.common.util.SpringContextUtils;
 import org.vben.common.util.TokenUtils;
 import org.vben.common.util.oConvertUtils;
-import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -35,12 +34,13 @@ import java.util.Set;
  * @Date: 2019-4-23 8:13
  * @Version: 1.1
  */
-@Component
+
 @Slf4j
+@Component
 public class ShiroRealm extends AuthorizingRealm {
-//	@Lazy
-//    @Resource
-//    private CommonAPI commonApi;
+	@Lazy
+    @Resource
+    private CommonAPI commonApi;
 
     @Lazy
     @Resource
@@ -71,6 +71,13 @@ public class ShiroRealm extends AuthorizingRealm {
             username = sysUser.getUsername();
             userId = sysUser.getId();
         }
+        SimpleAuthorizationInfo info = getSimpleAuthorizationInfo();
+        //System.out.println(permissionSet);
+        log.info("===============Shiro权限认证成功==============");
+        return info;
+    }
+
+    private static SimpleAuthorizationInfo getSimpleAuthorizationInfo() {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         // 设置用户拥有的角色集合，比如“admin,test”
@@ -83,8 +90,6 @@ public class ShiroRealm extends AuthorizingRealm {
         //Set<String> permissionSet = commonApi.queryUserAuths(userId);
         Set<String> permissionSet = new HashSet<>();
         info.addStringPermissions(permissionSet);
-        //System.out.println(permissionSet);
-        log.info("===============Shiro权限认证成功==============");
         return info;
     }
 

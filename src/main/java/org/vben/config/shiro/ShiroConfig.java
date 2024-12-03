@@ -206,6 +206,26 @@ public class ShiroConfig {
     }
     //update-end---author:chenrui ---date:20240126  for：【QQYUN-7932】AI助手------------
 
+
+
+    /**
+     * 下面的代码是添加注解支持
+     * @return
+     */
+    @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        /**
+         * 解决重复代理问题 github#994
+         * 添加前缀判断 不匹配 任何Advisor
+         */
+        defaultAdvisorAutoProxyCreator.setUsePrefix(true);
+        defaultAdvisorAutoProxyCreator.setAdvisorBeanNamePrefix("_no_advisor");
+        return defaultAdvisorAutoProxyCreator;
+    }
+
     @Bean("securityManager")
     public DefaultWebSecurityManager securityManager(ShiroRealm myRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -224,24 +244,6 @@ public class ShiroConfig {
         //自定义缓存实现,使用redis
         securityManager.setCacheManager(redisCacheManager());
         return securityManager;
-    }
-
-    /**
-     * 下面的代码是添加注解支持
-     * @return
-     */
-    @Bean
-    @DependsOn("lifecycleBeanPostProcessor")
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-        /**
-         * 解决重复代理问题 github#994
-         * 添加前缀判断 不匹配 任何Advisor
-         */
-        defaultAdvisorAutoProxyCreator.setUsePrefix(true);
-        defaultAdvisorAutoProxyCreator.setAdvisorBeanNamePrefix("_no_advisor");
-        return defaultAdvisorAutoProxyCreator;
     }
 
     @Bean
