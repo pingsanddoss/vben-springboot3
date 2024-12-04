@@ -1,4 +1,4 @@
-package org.vben.vbenspringboot3;
+package org.vben;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

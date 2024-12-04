@@ -39,7 +39,7 @@ public class Result<T> implements Serializable {
 	 * 返回数据对象 data
 	 */
 
-	private T result;
+	private T data;
 	
 	/**
 	 * 时间戳
@@ -79,7 +79,7 @@ public class Result<T> implements Serializable {
 		r.setSuccess(true);
 		r.setCode(CommonConstant.SC_OK_200);
 		//Result OK(String msg)方法会造成兼容性问题 issues/I4IP3D
-		r.setResult((T) msg);
+		r.setData((T) msg);
 		r.setMessage(msg);
 		return r;
 	}
@@ -88,7 +88,7 @@ public class Result<T> implements Serializable {
 		Result<T> r = new Result<T>();
 		r.setSuccess(true);
 		r.setCode(CommonConstant.SC_OK_200);
-		r.setResult(data);
+		r.setData(data);
 		return r;
 	}
 
@@ -112,7 +112,7 @@ public class Result<T> implements Serializable {
 		r.setCode(CommonConstant.SC_OK_200);
 		r.setMessage(msg);
 		//Result OK(String msg)方法会造成兼容性问题 issues/I4IP3D
-		r.setResult((T) msg);
+		r.setData((T) msg);
 		return r;
 	}
 
@@ -120,7 +120,7 @@ public class Result<T> implements Serializable {
 		Result<T> r = new Result<T>();
 		r.setSuccess(true);
 		r.setCode(CommonConstant.SC_OK_200);
-		r.setResult(data);
+		r.setData(data);
 		return r;
 	}
 
@@ -129,7 +129,7 @@ public class Result<T> implements Serializable {
 		r.setSuccess(true);
 		r.setCode(CommonConstant.SC_OK_200);
 		r.setMessage(msg);
-		r.setResult(data);
+		r.setData(data);
 		return r;
 	}
 
@@ -138,7 +138,7 @@ public class Result<T> implements Serializable {
 		r.setSuccess(false);
 		r.setCode(CommonConstant.SC_INTERNAL_SERVER_ERROR_500);
 		r.setMessage(msg);
-		r.setResult(data);
+		r.setData(data);
 		return r;
 	}
 

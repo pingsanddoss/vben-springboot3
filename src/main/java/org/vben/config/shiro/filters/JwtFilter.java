@@ -68,14 +68,16 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader(CommonConstant.X_ACCESS_TOKEN);
+        String token = httpServletRequest.getHeader(CommonConstant.Authorization);
         // update-begin--Author:lvdandan Date:20210105 for：JT-355 OA聊天添加token验证，获取token参数
         if (oConvertUtils.isEmpty(token)) {
-            token = httpServletRequest.getParameter("token");
+            token = httpServletRequest.getParameter("accessToken");
         }
         // update-end--Author:lvdandan Date:20210105 for：JT-355 OA聊天添加token验证，获取token参数
 
-        JwtToken jwtToken = new JwtToken(token);
+        String tokenReal = token.split(" ")[1];
+
+        JwtToken jwtToken = new JwtToken(tokenReal);
         // 提交给realm进行登入，如果错误他会抛出异常并被捕获
         getSubject(request, response).login(jwtToken);
         // 如果没有抛出异常则代表登入成功，返回true

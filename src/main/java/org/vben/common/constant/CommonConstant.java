@@ -331,6 +331,7 @@ public interface CommonConstant {
      * 注意：这四个常量值如果修改，需要与 jeecg-boot-starter/jeecg-boot-common/org.jeecg.config.FeignConfig 类中的值保持一致。
      */
     String X_ACCESS_TOKEN = "X-Access-Token";
+    String Authorization = "Authorization";
     String X_SIGN = "X-Sign";
     String X_TIMESTAMP = "X-TIMESTAMP";
     /** 租户请求头 更名为：X-Tenant-Id */
