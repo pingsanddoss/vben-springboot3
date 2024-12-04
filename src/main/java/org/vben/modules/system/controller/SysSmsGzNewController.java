@@ -2,11 +2,16 @@ package org.vben.modules.system.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.vben.modules.system.entity.SalaryBodyDetail;
 import org.vben.modules.system.entity.SalaryHeadDetail;
 import org.vben.modules.system.entity.SysSmsGzNew;
@@ -17,6 +22,7 @@ import org.vben.modules.system.service.ISysSmsGzNewService;
 import org.vben.modules.system.util.Reflections;
 import org.vben.common.util.oConvertUtils;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +39,71 @@ public class SysSmsGzNewController {
 
     @Autowired
     private ISalaryBodyDetailService salaryBodyDetailService;
+
+    @RequestMapping(value = "/importExcelNew", method = RequestMethod.POST)
+    public Result<?> importExcelNew(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+
+        //表头
+        Map<String,String> headCell = new LinkedHashMap<>();
+        //每行数据
+        List<Map<String,String>> bodyCell  = new ArrayList<>();
+        // 错误信息
+        List<String> errorMessage = new ArrayList<>();
+        int successLines = 0, errorLines = 0;
+        List<List<SysSmsGzNew>> info = new ArrayList<>();
+        //获取上传的表格并解析
+        for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+            MultipartFile file = entity.getValue();// 获取上传文件对象
+            InputStream in = file.getInputStream();
+            Workbook wb = WorkbookFactory.create(in);
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(0);
+
+            int totalRows = sheet.getPhysicalNumberOfRows();
+            // 对第一行进行处理，获取参数方法与列顺序的对应
+            // 获取第一行并存入headcell
+            int i1 = 1;
+            for(Cell cell:row){
+
+                if(!cell.getStringCellValue().isEmpty()){
+                    headCell.put("v"+i1,cell.getStringCellValue());
+                    i1++;
+                }
+            }
+            //获取实际行数据
+            for (int i = 1; i < totalRows; i++) {
+                int i2 = 1;
+                // 获取第i行
+                Row currentRow = sheet.getRow(i);
+                Map<String,String> as = new LinkedHashMap<>();
+                for(Cell cell:row){
+                    if(!cell.getStringCellValue().isEmpty()){
+                        Cell aa = currentRow.getCell(cell.getColumnIndex());
+                        if (aa == null){
+                            as.put("v"+i2, null);
+                        }else {
+                            aa.setCellType(CellType.STRING);
+                            String bb = aa.getStringCellValue();
+                            as.put("v"+i2,bb);
+                        }
+                        i2++;
+                    }
+                }
+                bodyCell.add(as);
+            }
+            //EasyExcel.read(file.getInputStream(), SysSmsGzNew.class, new DemoDataListener( new SysSmsGzNew(),info)).sheet().doRead();
+        }
+        Result<Object> a = new Result<>();
+        List<Object>  qqq = new ArrayList<>();
+        qqq.add(headCell);
+        qqq.add(bodyCell);
+        a.setData(qqq);
+        return a;
+    }
+
+
 
     @RequestMapping(value = "/sendSmsGzNew", method = RequestMethod.POST)
     public Result<?> sendSmsGzNew(@RequestBody JSONObject jsonObject) {
@@ -69,6 +140,7 @@ public class SysSmsGzNewController {
         sysSmsGzNew.setSendType(sendType);
         sysSmsGzNew.setDelFlag(0);
         sysSmsGzNewService.save(sysSmsGzNew);
+        // 保存细节实体信息
         List<SalaryBodyDetail> dataBody = jsonObject.getJSONArray("dataBody").toJavaList(SalaryBodyDetail.class);
         for (SalaryBodyDetail salaryBodyDetail : dataBody) {
             String salt = oConvertUtils.randomGen(6);
@@ -77,11 +149,10 @@ public class SysSmsGzNewController {
             salaryBodyDetail.setDelFlag(0);
         }
         salaryBodyDetailService.saveBatch(dataBody);
+        // 保存表头细节数据
         ArrayList<SalaryHeadDetail> salaryHeadDetailArrayList = new ArrayList<SalaryHeadDetail>();
         JSONObject dataHead = jsonObject.getObject("dataHead",JSONObject.class);
-        Iterator<String> keys = dataHead.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
+        for (String key : dataHead.keySet()) {
             String value = (String) dataHead.get(key);
             SalaryHeadDetail salaryHeadDetail = new SalaryHeadDetail();
             salaryHeadDetail.setEmployId(sysSmsGzNew.getId());
@@ -93,18 +164,13 @@ public class SysSmsGzNewController {
         }
         salaryHeadDetailService.saveBatch(salaryHeadDetailArrayList);
 
-
-
-
-
         String[] sendStat = sysSmsGzNew.getSendState().substring(1, sysSmsGzNew.getSendState().length()-1).split(",");
 
         //TODO
         //定时任务
-        if(showCron.equals("Y")){
+        if(sysSmsGzNew.getShowCron().equals("Y")){
 
             //定时任务执行
-
 
         }else {
             //立即执行
