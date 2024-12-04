@@ -96,7 +96,8 @@ public class RedisConfig extends CachingConfigurerSupport {
         /* 默认配置，设置缓存有效期 1小时*/
         //RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1));
         // 自定义配置test:demo 的超时时间为 5分钟
-        RedisCacheManager cacheManager = RedisCacheManager.builder(writer).cacheDefaults(redisCacheConfiguration)
+        //update-end-author:taoyan date:20210316 for:注解CacheEvict根据key删除redis支持通配符*
+        return RedisCacheManager.builder(writer).cacheDefaults(redisCacheConfiguration)
                 .withInitialCacheConfigurations(singletonMap(CacheConstant.SYS_DICT_TABLE_CACHE,
                         RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(10)).disableCachingNullValues()
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))))
@@ -104,8 +105,6 @@ public class RedisConfig extends CachingConfigurerSupport {
                 .withInitialCacheConfigurations(singletonMap(CacheConstant.PLUGIN_MALL_RANKING, RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(24)).disableCachingNullValues()))
                 .withInitialCacheConfigurations(singletonMap(CacheConstant.PLUGIN_MALL_PAGE_LIST, RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(24)).disableCachingNullValues()))
                 .transactionAware().build();
-        //update-end-author:taoyan date:20210316 for:注解CacheEvict根据key删除redis支持通配符*
-        return cacheManager;
     }
 
     /**
